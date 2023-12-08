@@ -94,6 +94,40 @@ def on_select(event):
     values=table.item(item_number, 'values')
     selection_window(values)
 
+def add_book():
+    modal_window = tk.Toplevel(root)
+    modal_window.title('Добавление данных')
+    modal_window.transient(root)
+    name_label = tk.Label(modal_window, text='Введите название')
+    name_label.pack(pady=10, padx=10)
+    name_entry = ttk.Entry(modal_window)
+    name_entry.pack(padx=10, pady=10)
+    author_label = tk.Label(modal_window, text='Введите автора')
+    author_label.pack(pady=10, padx=10)
+    author_entry = ttk.Entry(modal_window)
+    author_entry.pack(padx=10, pady=10)
+    section_label = tk.Label(modal_window, text='Введите секцию')
+    section_label.pack(pady=10, padx=10)
+    section_entry = ttk.Entry(modal_window)
+    section_entry.pack(padx=10, pady=10)
+
+
+    def add():
+        try:
+            name = name_entry.get()
+            author = author_entry.get()
+            section = section_entry.get()
+            cursor.execute('SELECT COUNT(book_id) FROM books')
+            id = cursor.fetchone()[0] + 1
+            cursor.execute(f"INSERT INTO books VALUES({id}, '{name}', '{author}', {section})")
+            conn.commit()
+            print('Успешно изменено')
+        except Exception as i:
+            print(i)
+            conn.rollback()
+    success = tk.Button(modal_window, text='Подтвердить действия', command=add)
+    success.pack(pady=20)
+
 
 table=ttk.Treeview(root, columns=('id', 'name', 'author', 'section'))
 table.heading('id', text='id')
@@ -103,7 +137,9 @@ table.heading('section', text='Секция')
 button=ttk.Button(root, text='Показать книги', command=show)
 table.bind('<<TreeviewSelect>>', on_select)
 table.pack(pady=10, padx=20)
-button.pack(pady=10)
+button.pack(pady=5)
+add_button = ttk.Button(root, text='Добавить книгу', command=add_book)
+add_button.pack(pady=5)
 root.mainloop()
 
 # Отправляю тебе сообщение через комментарий в самом низу кода
