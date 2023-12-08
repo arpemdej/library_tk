@@ -105,3 +105,5 @@ table.bind('<<TreeviewSelect>>', on_select)
 table.pack(pady=10, padx=20)
 button.pack(pady=10)
 root.mainloop()
+
+# Отправляю тебе сообщение через комментарий в самом низу кода
