@@ -13,13 +13,23 @@ cursor = conn.cursor()
 root = tk.Tk()
 def get():
     global cursor
-    cursor.execute('SELECT book_id, book_name, book_author, section_name FROM books JOIN sections ON book_section=section_id')
+    cursor.execute('SELECT book_id, book_name, book_author, section_name FROM books JOIN sections ON book_section=section_id ORDER BY book_id')
     books=cursor.fetchall()
     return books
+def get_by_author(author):
+    global cursor
+    cursor.execute(f"SELECT * FROM search_records('{author}')")
+    books = cursor.fetchall()
+    return books
+
 def show():
     for i in table.get_children():
         table.delete(i)
-    books=get()
+    author=author_entry.get()
+    if not author:
+        books=get()
+    else:
+        books=get_by_author(author)
     for i in books:
         table.insert('', 'end', values=i)
 
@@ -137,6 +147,10 @@ table.heading('section', text='Секция')
 button=ttk.Button(root, text='Показать книги', command=show)
 table.bind('<<TreeviewSelect>>', on_select)
 table.pack(pady=10, padx=20)
+label = ttk.Label(root, text='Введите автора')
+label.pack()
+author_entry = ttk.Entry(root)
+author_entry.pack(pady=5)
 button.pack(pady=5)
 add_button = ttk.Button(root, text='Добавить книгу', command=add_book)
 add_button.pack(pady=5)
